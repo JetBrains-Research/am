@@ -218,12 +218,12 @@ def get_clusters(users,
 
     :param users: dataframe with users names, e-mails, and logins
     :param distance_threshold: distance parameter for clustering
-    :param name_coef:
-    :param email_name_coef:
-    :param email_score_coef:
-    :param login_score_coef:
-    :param login_email_coef:
-    :param login_name_coef:
+    :param name_coef: weight for name similarity
+    :param email_name_coef: weight for name-email similarity
+    :param email_score_coef: weight for e-mail similarity
+    :param login_score_coef: weight for login similarity
+    :param login_email_coef: weight for login-email similarity
+    :param login_name_coef: weight for login-name similarity
     :return: dict which provides cluster id for each user
     """
     users = users.copy()
