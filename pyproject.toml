@@ -18,6 +18,6 @@ classifiers = [
 ]
 
 [project.urls]
-#"Homepage" = "https://github.com/JetBrains-Research/batcore"
+"Homepage" = "https://github.com/JetBrains-Research/am"
 #"Bug Tracker" = "https://github.com/JetBrains-Research/batcore/issues"
 "Docs" = "https://batcore.readthedocs.io/en/latest/index.html#"
