@@ -20,7 +20,7 @@ Resources
 * `Issue tracker`_
 * `PyPi page`_
 
-.. _https://github.com/JetBrains-Research/batcore: https://github.com/JetBrains-Research/am
+.. _https://github.com/JetBrains-Research/am: https://github.com/JetBrains-Research/am
 .. _Issue tracker: https://github.com/JetBrains-Research/am/issues
 .. _PyPi page: https://pypi.org/project/am/0.1.3/
 
