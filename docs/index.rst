@@ -8,3 +8,4 @@ Contents
 .. toctree::
    overview
    alias
+   utils
