@@ -1,5 +1,5 @@
 Welcome to documentation for alias matching!
-===================================
+============================================
 
 
 Contents
