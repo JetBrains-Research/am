@@ -5,7 +5,7 @@
 # from the environment for the first two.
 SPHINXOPTS    =
 SPHINXBUILD   = python -msphinx
-SPHINXPROJ    = Batcore
+SPHINXPROJ    = am
 SOURCEDIR     = source
 BUILDDIR      = _build
 
