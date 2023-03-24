@@ -1,4 +1,4 @@
-from .utils import get_clusters
+from aliasmatching.matching.utils import get_clusters
 
 
 def alias_matching(users, threshold=0.1,
