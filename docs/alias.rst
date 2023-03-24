@@ -14,13 +14,17 @@ In the Gerrit data, contributors can have 3 features: name, login, and e-mail.
 
 * **Name normalization.** We remove all punctuation, suffixes, and prefixes from the names. Additionally, titles and clarification terms ('admin', 'support') are removed. After that, the name is transformed into lowercase. Lastly, first and last names are calculated as the first and last part term after a split by space symbol.
 
-* **Name similarity.** We measure the similarity between two names with a Levenstein distance normalized to $[0, 1]$ interval. The distance is calculated between full names, first names, and second names separately. The resulting name similarity is the minimum distance between full names and averaged distances between first and last names.
+* **Name similarity.** We measure the similarity between two names with a Levenstein distance normalized to [0, 1] interval. The distance is calculated between full names, first names, and second names separately. The resulting name similarity is the minimum distance between full names and averaged distances between first and last names.
 
 * **Name-email similarity.** The distance between the name and the email is a 0-1 measure. The distance is deemed to be 0 if and only if the e-mail consists of the full name or first and last name.
 
 * **E-mail similarity.** For email similarity, we calculate normalized Levenstein distance between two bases (part of the e-mail preceding to @).
 
+* **Login similarity.** Normalized Levenstein distance between two logins
+
 * **Login-email similarity.** Levenstein distance between the base of the e-mail and the login.
+
+* **Name-login similarity.** Same as name-email distance
 
 * **User identifier distance.** The resulting distance between two users is the minimum of the metrics above.
 

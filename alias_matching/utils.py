@@ -110,8 +110,7 @@ def adjust_score(score, weight):
 
 
 def sim_users(u1, u2,
-              full_name_coef=1,
-              part_name_coef=1,
+              name_coef=1,
               email_name_coef=1,
               email_coef=1,
               login_coef=1,
@@ -125,12 +124,13 @@ def sim_users(u1, u2,
         name_score = 1
     else:
         full_name_score = get_norm_levdist(u1['name'], u2['name'])
-        full_name_score = adjust_score(full_name_score, full_name_coef)
 
         part_name_score = get_norm_levdist(u1['first_name'], u2['first_name']) + get_norm_levdist(u1['last_name'],
                                                                                                   u2['last_name'])
         part_name_score /= 2
-        part_name_score = adjust_score(part_name_score, part_name_coef)
+
+        name_score = min(full_name_score, part_name_score)
+        name_score = adjust_score(name_score, name_coef)
 
         email_name_score = max(name_handle_dist((u1['first_name'], u1['last_name']),
                                                 u2['email']),
@@ -140,7 +140,7 @@ def sim_users(u1, u2,
 
         email_name_score = adjust_score(email_name_score, email_name_coef)
 
-        name_score = min(full_name_score, part_name_score, email_name_score)
+        name_score = min(name_score, email_name_score)
 
     # handle score
 
@@ -179,8 +179,7 @@ def sim_users(u1, u2,
 
 
 def get_sim_matrix(users,
-                   full_name_coef=1,
-                   part_name_coef=1,
+                   name_coef=1,
                    email_name_coef=1,
                    email_score_coef=1,
                    login_score_coef=1,
@@ -193,7 +192,7 @@ def get_sim_matrix(users,
     for i1, row1 in tqdm(users.iterrows()):
         def score(i2, row2):
             if i1 < i2:
-                return sim_users(row1, row2, full_name_coef, part_name_coef, email_name_coef, email_score_coef,
+                return sim_users(row1, row2, name_coef, email_name_coef, email_score_coef,
                                  login_score_coef, login_email_coef, login_name_coef)
             if i1 == i2:
                 return 0
@@ -207,8 +206,7 @@ def get_sim_matrix(users,
 
 def get_clusters(users,
                  distance_threshold=0.1,
-                 full_name_coef=1,
-                 part_name_coef=1,
+                 name_coef=1,
                  email_name_coef=1,
                  email_score_coef=1,
                  login_score_coef=1,
@@ -220,8 +218,7 @@ def get_clusters(users,
 
     :param users: dataframe with users names, e-mails, and logins
     :param distance_threshold: distance parameter for clustering
-    :param full_name_coef:
-    :param part_name_coef:
+    :param name_coef:
     :param email_name_coef:
     :param email_score_coef:
     :param login_score_coef:
@@ -239,8 +236,7 @@ def get_clusters(users,
     users['last_name'] = users.name.apply(last_name)
 
     sim_matrix = get_sim_matrix(users,
-                                full_name_coef,
-                                part_name_coef,
+                                name_coef,
                                 email_name_coef,
                                 email_score_coef,
                                 login_score_coef,
