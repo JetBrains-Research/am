@@ -21,7 +21,8 @@ def am_test(users, threshold=0.1,
        :param email_score_coef:
        :param login_score_coef:
        :param login_email_coef:
-       :param login_name_coef:/
+       :param login_name_coef:
+
        :return: dict which provides cluster id for each user
    """
 
