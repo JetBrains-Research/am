@@ -5,7 +5,7 @@
 # from the environment for the first two.
 SPHINXOPTS    =
 SPHINXBUILD   = python -msphinx
-SPHINXPROJ    = am
+SPHINXPROJ    = alias_matching
 SOURCEDIR     = source
 BUILDDIR      = _build
 

@@ -9,7 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=.
 set BUILDDIR=_build
-set SPHINXPROJ=Batcore
+set SPHINXPROJ=Alias_matching
 
 if "%1" == "" goto help
 

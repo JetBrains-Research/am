@@ -27,4 +27,4 @@ In the Gerrit data, contributors can have 3 features: name, login, and e-mail.
 After the distance is calculated, we split users into clusters via `Agglomerative Clustering <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AgglomerativeClustering.html>`_ with a complete linkage.
 All developers in one cluster are treated as the same and mapped to the one resulting id.
 
-.. autofunction:: am.matching.sim_users
+.. autofunction:: alias_matching.matching.am_test

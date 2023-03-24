@@ -1,5 +1,5 @@
 from .utils import *
-from .matching import alias_matching
+from .matching import am_test
 __all__ = [
     "get_clusters",
     "get_sim_matrix",
@@ -11,5 +11,5 @@ __all__ = [
     "name_preprocess",
     "remove_ban_words",
     "remove_punctuation",
-    "alias_matching"
+    "am_test"
 ]

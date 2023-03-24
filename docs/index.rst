@@ -1,4 +1,4 @@
-Welcome to BaTCoRe's documentation!
+Welcome to documentation for alias matching!
 ===================================
 
 

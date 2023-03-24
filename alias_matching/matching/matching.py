@@ -1,7 +1,7 @@
-from am.matching.utils import get_clusters
+from alias_matching.matching.utils import get_clusters
 
 
-def alias_matching(users, threshold=0.1,
+def am_test(users, threshold=0.1,
                    full_name_coef=1,
                    part_name_coef=1,
                    email_name_coef=1,
