@@ -1,5 +1,5 @@
 from .utils import *
-from matching import alias_matching
+from .matching import alias_matching
 __all__ = [
     "get_clusters",
     "get_sim_matrix",
