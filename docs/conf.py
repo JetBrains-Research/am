@@ -6,8 +6,8 @@ sys.path.insert(0, os.path.abspath(''))
 sys.path.insert(0, os.path.abspath('docs'))
 # -- Project information
 
-project = 'BaTCoRe'
-copyright = '2022, JetBrains'
+project = 'am'
+copyright = '2023, JetBrains'
 author = 'JetBrains'
 
 release = '0.1'
