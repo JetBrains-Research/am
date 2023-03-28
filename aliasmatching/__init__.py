@@ -1,5 +1,5 @@
 from .matching import bird_matching
 
-__all__ = ['alias_matching',
+__all__ = ['aliasmatching',
            "bird_matching",
            "matching"]

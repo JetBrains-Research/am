@@ -1,4 +1,4 @@
-from alias_matching.utils import get_clusters
+from aliasmatching.utils import get_clusters
 
 
 def bird_matching(users,

@@ -4,11 +4,13 @@
 Overview
 ========
 
-TODO
+`aliasmatching` is a python package that provides tools for identifying users that have different aliases.
+Tools are designed to support GitHub users ids: username, login, and e-mail.
 
-Installing BaTCoRe
-====================
-BaTCoRe can be installed via pip::
+
+Installing alias matching toolkit
+=================================
+AM toolkit can be installed via pip::
 
     $ pip install aliasmatching
 
