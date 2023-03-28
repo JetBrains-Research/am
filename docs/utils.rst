@@ -5,10 +5,10 @@ Utils for alias matching
 ========================
 
 
-.. autofunction:: alias_matching.utils.get_sim_matrix
+.. autofunction:: aliasmatching.utils.get_sim_matrix
 
-.. autofunction:: alias_matching.utils.sim_users
+.. autofunction:: aliasmatching.utils.sim_users
 
-.. autofunction:: alias_matching.utils.get_norm_levdist
+.. autofunction:: aliasmatching.utils.get_norm_levdist
 
-.. autofunction:: alias_matching.utils.name_handle_dist
+.. autofunction:: aliasmatching.utils.name_handle_dist
