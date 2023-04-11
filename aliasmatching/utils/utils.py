@@ -59,9 +59,9 @@ def last_name(name):
     return name_parts[-1]
 
 
-def shorten_email(email):
+def email_base(email):
     """
-    returns shorten form of the e-mail (everything before @)
+    returns the base of e-mail (everything before @)
     """
     if email == '':
         return ''
@@ -145,9 +145,9 @@ def sim_users(u1, u2,
     # handle score
 
     email_score = 1
-    if not u1['short_email'] is np.nan and not u2['short_email'] is np.nan:
-        if len(u1['short_email']) > 2 and len(u2['short_email']) > 2:
-            email_score = get_norm_levdist(u1['short_email'], u2['short_email'])
+    if not u1['email_base'] is np.nan and not u2['email_base'] is np.nan:
+        if len(u1['email_base']) > 2 and len(u2['email_base']) > 2:
+            email_score = get_norm_levdist(u1['email_base'], u2['email_base'])
     email_score = adjust_score(email_score, email_coef)
 
     login_score = 1
@@ -157,13 +157,13 @@ def sim_users(u1, u2,
     login_score = adjust_score(login_score, login_coef)
 
     login_email_score = 1
-    if not u1['login'] is np.nan and not u2['short_email'] is np.nan:
-        if len(u1['login']) > 2 and len(u2['short_email']) > 2:
-            login_email_score = get_norm_levdist(u1['login'], u2['short_email'])
+    if not u1['login'] is np.nan and not u2['email_base'] is np.nan:
+        if len(u1['login']) > 2 and len(u2['email_base']) > 2:
+            login_email_score = get_norm_levdist(u1['login'], u2['email_base'])
 
-    if not u1['short_email'] is np.nan and not u2['login'] is np.nan:
-        if len(u1['short_email']) > 2 and len(u2['login']) > 2:
-            login_email_score = min(login_email_score, get_norm_levdist(u1['short_email'], u2['login']))
+    if not u1['email_base'] is np.nan and not u2['login'] is np.nan:
+        if len(u1['email_base']) > 2 and len(u2['login']) > 2:
+            login_email_score = min(login_email_score, get_norm_levdist(u1['email_base'], u2['login']))
     login_email_score = adjust_score(login_email_score, login_email_coef)
 
     login_name_score = max(name_handle_dist((u1['first_name'], u1['last_name']),
@@ -231,7 +231,7 @@ def get_clusters(users,
     users = users.fillna('')
     users.name = users.name.apply(name_preprocess)
 
-    users['short_email'] = users.email.apply(shorten_email)
+    users['email_base'] = users.email.apply(email_base)
     users['first_name'] = users.name.apply(first_name)
     users['last_name'] = users.name.apply(last_name)
 
