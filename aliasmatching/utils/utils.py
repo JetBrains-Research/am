@@ -1,10 +1,8 @@
 import numpy as np
-import pandas as pd
-from sklearn.cluster import AgglomerativeClustering
+
 from Levenshtein import distance as LevDist
 import string
 from tqdm import tqdm
-from collections import defaultdict
 
 
 def remove_punctuation(name):
@@ -59,15 +57,26 @@ def last_name(name):
     return name_parts[-1]
 
 
-def shorten_email(email):
+def email_base(email):
     """
-    returns shorten form of the e-mail (everything before @)
+    returns the base of e-mail (everything before @)
     """
     if email == '':
         return ''
     return email.split('@')[0]
 
 
+def na_handler(function):
+    def wrapper(*args):
+        for arg in args:
+            if arg == '':
+                return 1
+        return function(*args)
+
+    return wrapper
+
+
+@na_handler
 def get_norm_levdist(str1, str2):
     """
     Normalised Levenshtein distance between two strings
@@ -83,6 +92,7 @@ def get_norm_levdist(str1, str2):
     return score
 
 
+@na_handler
 def name_handle_dist(name, handle):
     """
     checks if first and second name are in the handle (e-mail or login)
@@ -109,157 +119,70 @@ def adjust_score(score, weight):
     return 1 - (1 - score) * weight
 
 
-def sim_users(u1, u2,
-              name_coef=1,
-              email_name_coef=1,
-              email_coef=1,
-              login_coef=1,
-              login_email_coef=0,
-              login_name_coef=0):
-    """
-    similarity of two users ids based on their name, e-mail, and login
-    """
-    # name scores
-    if u1['name'] is np.nan or u2['name'] is np.nan:
-        name_score = 1
-    else:
-        full_name_score = get_norm_levdist(u1['name'], u2['name'])
+def name_distance(u1, u2):
+    full_name_score = get_norm_levdist(u1['name'], u2['name'])
 
-        part_name_score = get_norm_levdist(u1['first_name'], u2['first_name']) + get_norm_levdist(u1['last_name'],
-                                                                                                  u2['last_name'])
-        part_name_score /= 2
+    part_name_score = get_norm_levdist(u1['first_name'], u2['first_name']) + get_norm_levdist(u1['last_name'],
+                                                                                              u2['last_name'])
+    part_name_score /= 2
 
-        name_score = min(full_name_score, part_name_score)
-        name_score = adjust_score(name_score, name_coef)
+    return min(full_name_score, part_name_score)
 
-        email_name_score = max(name_handle_dist((u1['first_name'], u1['last_name']),
-                                                u2['email']),
-                               name_handle_dist((u2['first_name'], u2['last_name']),
-                                                u1['email'])
-                               )
 
-        email_name_score = adjust_score(email_name_score, email_name_coef)
+def name_email_distance(u1, u2):
+    score = max(name_handle_dist((u1['first_name'], u1['last_name']),
+                                 u2['email']),
+                name_handle_dist((u2['first_name'], u2['last_name']),
+                                 u1['email'])
+                )
 
-        name_score = min(name_score, email_name_score)
+    return score
 
-    # handle score
 
-    email_score = 1
-    if not u1['short_email'] is np.nan and not u2['short_email'] is np.nan:
-        if len(u1['short_email']) > 2 and len(u2['short_email']) > 2:
-            email_score = get_norm_levdist(u1['short_email'], u2['short_email'])
-    email_score = adjust_score(email_score, email_coef)
+def login_name_distance(u1, u2):
+    score = max(name_handle_dist((u1['first_name'], u1['last_name']),
+                                 u2['login']),
+                name_handle_dist((u2['first_name'], u2['last_name']),
+                                 u1['login'])
+                )
+    return score
 
-    login_score = 1
+
+def login_email_distance(u1, u2):
+    score = 1
+    if not u1['login'] is np.nan and not u2['email_base'] is np.nan:
+        if len(u1['login']) > 2 and len(u2['email_base']) > 2:
+            score = get_norm_levdist(u1['login'], u2['email_base'])
+    if not u1['email_base'] is np.nan and not u2['login'] is np.nan:
+        if len(u1['email_base']) > 2 and len(u2['login']) > 2:
+            score = min(score, get_norm_levdist(u1['email_base'], u2['login']))
+    return score
+
+
+def login_distance(u1, u2):
+    score = 1
     if not u1['login'] is np.nan and not u2['login'] is np.nan:
         if len(u1['login']) > 2 and len(u2['login']) > 2:
-            login_score = get_norm_levdist(u1['login'], u2['login'])
-    login_score = adjust_score(login_score, login_coef)
+            score = get_norm_levdist(u1['login'], u2['login'])
+    return score
 
-    login_email_score = 1
-    if not u1['login'] is np.nan and not u2['short_email'] is np.nan:
-        if len(u1['login']) > 2 and len(u2['short_email']) > 2:
-            login_email_score = get_norm_levdist(u1['login'], u2['short_email'])
 
-    if not u1['short_email'] is np.nan and not u2['login'] is np.nan:
-        if len(u1['short_email']) > 2 and len(u2['login']) > 2:
-            login_email_score = min(login_email_score, get_norm_levdist(u1['short_email'], u2['login']))
-    login_email_score = adjust_score(login_email_score, login_email_coef)
-
-    login_name_score = max(name_handle_dist((u1['first_name'], u1['last_name']),
-                                            u2['login']),
-                           name_handle_dist((u2['first_name'], u2['last_name']),
-                                            u1['login'])
-                           )
-    login_name_score = adjust_score(login_name_score, login_name_coef)
-
-    handle_score = min(email_score, login_score, login_email_score, login_name_score)
-
-    return min(name_score, handle_score)
+def email_distance(u1, u2):
+    score = 1
+    if not u1['email_base'] is np.nan and not u2['email_base'] is np.nan:
+        if len(u1['email_base']) > 2 and len(u2['email_base']) > 2:
+            score = get_norm_levdist(u1['email_base'], u2['email_base'])
+    return score
 
 
 def get_sim_matrix(users,
-                   name_coef=1,
-                   email_name_coef=1,
-                   email_score_coef=1,
-                   login_score_coef=1,
-                   login_email_coef=0,
-                   login_name_coef=0):
+                   sim_measure):
     """
     calculates name similarity matrix between users
     """
     sim_matrix = np.zeros((len(users), len(users)))
     for i1, row1 in tqdm(users.iterrows()):
-        def score(i2, row2):
-            if i1 < i2:
-                return sim_users(row1, row2, name_coef, email_name_coef, email_score_coef,
-                                 login_score_coef, login_email_coef, login_name_coef)
-            if i1 == i2:
-                return 0
-            return 0
-
-        sim_matrix[i1] = [score(*p) for p in users.iterrows()]
+        sim_matrix[i1] = [sim_measure(row1, row2) if i1 < i2 else 0 for (i2, row2) in users.iterrows()]
     sim_matrix = sim_matrix + sim_matrix.T
 
     return sim_matrix
-
-
-def get_clusters(users,
-                 distance_threshold=0.1,
-                 name_coef=1,
-                 email_name_coef=1,
-                 email_score_coef=1,
-                 login_score_coef=1,
-                 login_email_coef=0,
-                 login_name_coef=0):
-    """
-    Adaptation of the approach from the 'Mining Email Social Networks'. Algorithm measures pair-wise similarity
-    between all participants and splits them into clusters with Agglomerative clustering.
-
-    :param users: dataframe with users names, e-mails, and logins
-    :param distance_threshold: distance parameter for clustering
-    :param name_coef: weight for name similarity
-    :param email_name_coef: weight for name-email similarity
-    :param email_score_coef: weight for e-mail similarity
-    :param login_score_coef: weight for login similarity
-    :param login_email_coef: weight for login-email similarity
-    :param login_name_coef: weight for login-name similarity
-    :return: dict which provides cluster id for each user
-    """
-    users = users.copy()
-    users = users.drop_duplicates().reset_index().drop('index', axis=1)
-    users = users.fillna('')
-    users.name = users.name.apply(name_preprocess)
-
-    users['short_email'] = users.email.apply(shorten_email)
-    users['first_name'] = users.name.apply(first_name)
-    users['last_name'] = users.name.apply(last_name)
-
-    sim_matrix = get_sim_matrix(users,
-                                name_coef,
-                                email_name_coef,
-                                email_score_coef,
-                                login_score_coef,
-                                login_email_coef,
-                                login_name_coef)
-    agg = AgglomerativeClustering(n_clusters=None,
-                                  distance_threshold=distance_threshold,
-                                  affinity='precomputed',
-                                  linkage='complete').fit(sim_matrix)
-
-    users['cluster'] = agg.labels_
-    df_cs = users[['cluster', 'name']].groupby('cluster').count().reset_index().rename({'name': 'cluster_size'},
-                                                                                       axis=1)
-
-    users = users.join(df_cs, on='cluster', rsuffix='_r').drop('cluster_r', axis=1)
-    users = users.sort_values(['cluster_size', 'cluster'], ascending=False).reset_index().drop('index', axis=1)
-
-    users['cluster2'] = -users.index - 1
-
-    users.loc[users['cluster'].isna(), 'cluster'] = users['cluster2'][users['cluster'].isna()]
-    users['id'] = pd.factorize(users['cluster'])[0]
-
-    key2id = {x['full_id']: x['id'] for _, x in users.iterrows()}
-    key2id = defaultdict(lambda: np.nan, key2id)
-
-    return key2id
