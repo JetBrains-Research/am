@@ -20,8 +20,6 @@ class BirdMatching:
       :param login_score_coef: weight for login similarity
       :param login_email_coef: weight for login-email similarity
       :param login_name_coef: weight for login-name similarity
-
-      :return: users dataframe with 'cluster'. Users that are deemed as one have same number in 'cluster' column
     """
 
     def __init__(self,
@@ -130,7 +128,8 @@ class BirdMatching:
         For each user_id assigns cluster number. Ids with same cluster should be treated as the same user
 
         :param users: dataframe with users names, emails, and logins
-        :return: modified users dataframe with cluster column
+        :return: users dataframe with 'cluster'. Users that are deemed as one have same number in 'cluster' column
+
         """
 
         key2id = self.get_clusters(users)
