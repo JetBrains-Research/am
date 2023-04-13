@@ -32,3 +32,6 @@ After the distance is calculated, we split users into clusters via `Agglomerativ
 All developers in one cluster are treated as the same and mapped to the one resulting id.
 
 .. autoclass:: aliasmatching.BirdMatching
+   :members:
+   :no-undoc-members:
+   :exclude-members:
