@@ -41,6 +41,12 @@ class BirdMatching:
                              'login_name_coef': login_name_coef}
 
     def distance(self, u1, u2):
+        """
+        Computes distance between two users
+        :param u1: features of user_1
+        :param u2: features of user_2
+        :return: distance between two users
+        """
         if u1['name'] is np.nan or u2['name'] is np.nan:
             name_score = 1
         else:
@@ -73,6 +79,13 @@ class BirdMatching:
 
     def get_clusters(self,
                      users):
+        """
+        Splits users id into clusters which represent one user with different aliases
+
+        :param users: dataframe with users names, emails, and logins
+        :param distance_threshold: distance parameter for clustering
+        :return: dict which provides cluster id for each user
+        """
         users_og = users
         users = users.copy()
         users = users.drop_duplicates().reset_index().drop('index', axis=1)
@@ -113,6 +126,12 @@ class BirdMatching:
         return key2id
 
     def process(self, users):
+        """
+        For each user_id assigns cluster number. Ids with same cluster should be treated as the same user
+
+        :param users: dataframe with users names, emails, and logins
+        :return: modified users dataframe with cluster column
+        """
 
         key2id = self.get_clusters(users)
 
